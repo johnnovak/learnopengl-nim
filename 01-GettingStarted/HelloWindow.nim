@@ -56,6 +56,8 @@ proc main() =
     draw()
     glfw.swapBufs(win)
 
+  # Exit
+  win.destroy()
   glfw.terminate()
 
 
