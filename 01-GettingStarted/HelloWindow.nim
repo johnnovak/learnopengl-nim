@@ -6,11 +6,6 @@ import glfw
 import glfw/wrapper
 
 
-proc draw() =
-  glClearColor(0.2, 0.3, 0.3, 1.0)
-  glClear(GL_COLOR_BUFFER_BIT)
-
-
 proc keyCb(w: Win, key: Key, scanCode: int, action: KeyAction,
            modKeys: ModifierKeySet) =
 
@@ -19,7 +14,13 @@ proc keyCb(w: Win, key: Key, scanCode: int, action: KeyAction,
       w.shouldClose = true
 
 
+proc draw() =
+  glClearColor(0.2, 0.3, 0.3, 1.0)
+  glClear(GL_COLOR_BUFFER_BIT)
+
+
 proc main() =
+  # Initialise GLFW
   glfw.init()
 
   # Create window
@@ -39,7 +40,7 @@ proc main() =
   if not gladLoadGL(getProcAddress):
     quit "Error initialising OpenGL"
 
-  # Create OpenGL viewport
+  # Define viewport dimensions
   var width, height: int
   (width, height) = framebufSize(win)
   glViewport(0, 0, GLint(width), GLint(height))
@@ -56,9 +57,12 @@ proc main() =
     draw()
     glfw.swapBufs(win)
 
-  # Exit
+  # Destroy window
   win.destroy()
+
+  # Terminate GLFW, clearing any allocated resources
   glfw.terminate()
 
 
 main()
+

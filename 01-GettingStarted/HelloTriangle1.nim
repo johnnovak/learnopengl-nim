@@ -166,12 +166,13 @@ proc draw() =
 
 
 proc main() =
+  # Initialise GLFW
   glfw.init()
 
   # Create window
   let win = newGlWin(
     dim = (w: 800, h: 600),
-    title = "Hello Window",
+    title = "Hello Triangle1",
     resizable = false,
     bits = (r: 8, g: 8, b: 8, a: 8, stencil: 8, depth: 16),
     version = glv33,
@@ -212,7 +213,7 @@ proc main() =
   # Destroy window
   win.destroy()
 
-  # Terminate GLFW, clearing any resources allocated by GLFW
+  # Terminate GLFW, clearing any allocated resources
   glfw.terminate()
 
 
