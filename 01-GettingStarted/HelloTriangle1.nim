@@ -5,13 +5,11 @@ import glad/gl
 import glfw
 import glfw/wrapper
 
-
 var vertices: array[0..8, GLfloat] = [
   -0.5'f32, -0.5'f32, 0.0'f32,
    0.5'f32, -0.5'f32, 0.0'f32,
    0.0'f32,  0.5'f32, 0.0'f32
 ]
-
 
 let vertexShaderSource = """
 #version 330 core
@@ -24,7 +22,6 @@ void main()
 }
 """
 
-
 let fragmentShaderSource = """
 #version 330 core
 
@@ -35,7 +32,6 @@ void main()
     color = vec4(1.0f, 0.5f, 0.2f, 1.0f);
 }
 """
-
 
 var
   vao, vbo, shaderProgram: GLuint
