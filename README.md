@@ -1,8 +1,9 @@
 # Learn OpenGL in Nim
 
-Example programs and exercises from [https://learnopengl.com/](learnopengl.com) translated to
-[https://nim-lang.org/](Nim). A work in progress.
+Example programs and exercises from
+[learnopengl.com](https://learnopengl.com/) translated to
+[Nim](https://nim-lang.org/). A work in progress.
 
-Requires [https://github.com/ephja/nim-glfw](nim-glfw) and
-[https://github.com/stavenko/nim-glm](nim-glm).
+Requires [nim-glfw](https://github.com/ephja/nim-glfw) and
+[nim-glm](https://github.com/stavenko/nim-glm).
 
