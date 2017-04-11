@@ -131,16 +131,20 @@ proc setup() =
   # Bind the Vertex Array Object first, then bind and set vertex buffer(s)
   # and attribute pointer(s)
   glBindVertexArray(vao)
-
   glBindBuffer(GL_ARRAY_BUFFER, vbo)
+
+  # Copy vertex data from CPU memory into GPU memory
   glBufferData(GL_ARRAY_BUFFER, size = GLsizeiptr(sizeof(vertices)),
                vertices.addr, GL_STATIC_DRAW)
 
+  # Tell OpenGL how it should interpret the vertex data
   glVertexAttribPointer(index = 0, size = 3, `type` = cGL_FLOAT,
                         normalized = false,
                         stride = 3 * sizeof(GLfloat),
                         `pointer` = GLvoid(nil))
 
+  # Enable vertex attribute at location 0 (all vertex attributes are disabled
+  # by default)
   glEnableVertexAttribArray(index = 0)
 
   # Note that this is allowed; the call to glVertexAttribPointer registered
@@ -151,6 +155,11 @@ proc setup() =
   # Unbind VAO (it's always a good thing to unbind any buffer/array to prevent
   # strange bugs)
   glBindVertexArray(GL_NONE)
+
+
+proc cleanup() =
+  glDeleteVertexArrays(1, vao.addr)
+  glDeleteBuffers(1, vbo.addr)
 
 
 proc draw() =
@@ -207,8 +216,7 @@ proc main() =
     glfw.swapBufs(win)
 
   # Properly de-allocate all resources once they've outlived their purpose
-  glDeleteVertexArrays(1, vao.addr)
-  glDeleteBuffers(1, vbo.addr)
+  cleanup()
 
   # Destroy window
   win.destroy()
