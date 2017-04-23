@@ -5,7 +5,7 @@ Example programs and exercises from
 [Nim](https://nim-lang.org/). A work in progress.
 
 All programs have been tested on Windows 7 64-bit and OS X El Capitan. If
-you're on Linux, see the Linux notes below.
+you're on Linux, see the [Linux notes](#linux-notes) below.
 
 ## Requirements
 
