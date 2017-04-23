@@ -13,7 +13,7 @@ Requires [nim-glfw](https://github.com/ephja/nim-glfw),
 [nim-glm](https://github.com/stavenko/nim-glm) and
 [stb_Image-Nim](https://gitlab.com/define-private-public/stb_image-Nim).
 
-The easiest way to install the dependencies is with Nimble:
+The easiest way to install these dependencies is with Nimble:
 
 ```
 nimble nim-glfw glm stb_image
@@ -29,9 +29,9 @@ nim c -r Shader1.nim
 
 ## Linux notes
 
-On Linux, the header files required by GLFW aren't usually part of the base
-install like on Windows and OS X, so make sure to install them first. On
-Debian, I managed to do that with the following command:using the
+On Linux, the header files required by GLFW aren't usually part of the base OS
+installation like on Windows and OS X, so make sure to install them first. On
+Debian, I managed to do that with the following command:
 
 ```
 sudo apt-get install xorg-dev libglu1-mesa libglu1-mesa-dev mesa-common-dev
