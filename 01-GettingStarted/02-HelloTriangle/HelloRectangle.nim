@@ -87,13 +87,15 @@ proc createShaderProgram(vertexShaderSource,
 
 
 var vertices = [
-  GLfloat(-0.7), -0.3, 0.0,
-          -0.1,  -0.3, 0.0,
-          -0.4,   0.3, 0.0,
+   GLfloat(0.5), 0.5, 0.0,  # top right
+           0.5, -0.5, 0.0,  # bottom right
+          -0.5, -0.5, 0.0,  # bottom left
+          -0.5,  0.5, 0.0   # top left
+]
 
-           0.1 , -0.3, 0.0,
-           0.7,  -0.3, 0.0,
-           0.4,   0.3, 0.0
+var indices = [
+  GLuint(0), 1, 3,  # first triangle
+         1,  2, 3   # second triangle
 ]
 
 let vertexShaderSource = """
@@ -119,7 +121,7 @@ void main()
 """
 
 var
-  vao, vbo, shaderProgram: GLuint
+  ebo, vao, vbo, shaderProgram: GLuint
 
 
 proc setup() =
@@ -129,27 +131,35 @@ proc setup() =
   # Create Vertex Array Object
   glGenVertexArrays(1, vao.addr)
 
+  # Create Element Buffer Object
+  glGenBuffers(1, ebo.addr)
+
   # Create Vertex Buffer Object
   glGenBuffers(1, vbo.addr)
 
-  # Bind the Vertex Array Object first, then bind and set vertex buffer(s)
-  # and attribute pointer(s)
+  # Bind the Vertex Array Object first, then bind and set vertex & element
+  # buffer(s) and attribute pointer(s)
   glBindVertexArray(vao)
-  glBindBuffer(GL_ARRAY_BUFFER, vbo)
 
   # Copy vertex data from CPU memory into GPU memory
+  glBindBuffer(GL_ARRAY_BUFFER, vbo)
   glBufferData(GL_ARRAY_BUFFER, size = GLsizeiptr(sizeof(vertices)),
                vertices.addr, GL_STATIC_DRAW)
 
   # Tell OpenGL how it should interpret the vertex data
-  glVertexAttribPointer(index = 0, size = 3, `type` = cGL_FLOAT,
+  glVertexAttribPointer(index = 0, size = 3, type = cGL_FLOAT,
                         normalized = false,
                         stride = 3 * sizeof(GLfloat),
-                        `pointer` = GLvoid(nil))
+                        pointer = cast[pointer](0))
 
   # Enable vertex attribute at location 0 (all vertex attributes are disabled
   # by default)
   glEnableVertexAttribArray(index = 0)
+
+  # Copy element data from CPU memory into GPU memory
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo)
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, size = GLsizeiptr(sizeof(indices)),
+               indices.addr, GL_STATIC_DRAW)
 
   # Note that this is allowed; the call to glVertexAttribPointer registered
   # VBO as the currently bound vertex buffer object so afterwards we can
@@ -164,6 +174,7 @@ proc setup() =
 proc cleanup() =
   glDeleteVertexArrays(1, vao.addr)
   glDeleteBuffers(1, vbo.addr)
+  glDeleteBuffers(1, ebo.addr)
 
 
 proc draw() =
@@ -171,10 +182,11 @@ proc draw() =
   glClearColor(0.2, 0.3, 0.3, 1.0)
   glClear(GL_COLOR_BUFFER_BIT)
 
-  # Draw triangles
+  # Draw triangle
   glUseProgram(shaderProgram)
   glBindVertexArray(vao)
-  glDrawArrays(GL_TRIANGLES, first = 0, count = 6)
+  glDrawElements(GL_TRIANGLES, count = GLsizei(6), GL_UNSIGNED_INT,
+                 indices = GLvoid(nil))
   glBindVertexArray(GL_NONE)
 
 

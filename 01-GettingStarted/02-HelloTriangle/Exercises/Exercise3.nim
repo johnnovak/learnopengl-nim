@@ -109,7 +109,7 @@ void main()
 }
 """
 
-let fragmentShaderSource = """
+let fragmentShaderSource1 = """
 #version 330 core
 
 out vec4 color;
@@ -120,8 +120,19 @@ void main()
 }
 """
 
+let fragmentShaderSource2 = """
+#version 330 core
+
+out vec4 color;
+
+void main()
+{
+    color = vec4(1.0f, 1.0f, 0.2f, 1.0f);
+}
+"""
+
 var
-  vao1, vao2, vbo1, vbo2, shaderProgram: GLuint
+  vao1, vao2, vbo1, vbo2, shaderProgram1, shaderProgram2: GLuint
 
 
 proc setupVertexData(vao, vbo: ptr GLuint,
@@ -142,10 +153,10 @@ proc setupVertexData(vao, vbo: ptr GLuint,
   glBufferData(GL_ARRAY_BUFFER, numVertices, vertices, GL_STATIC_DRAW)
 
   # Tell OpenGL how it should interpret the vertex data
-  glVertexAttribPointer(index = 0, size = 3, `type` = cGL_FLOAT,
+  glVertexAttribPointer(index = 0, size = 3, type = cGL_FLOAT,
                         normalized = false,
                         stride = 3 * sizeof(GLfloat),
-                        `pointer` = GLvoid(nil))
+                        pointer = cast[pointer](0))
 
   # Enable vertex attribute at location 0 (all vertex attributes are disabled
   # by default)
@@ -162,8 +173,11 @@ proc setupVertexData(vao, vbo: ptr GLuint,
 
 
 proc setup() =
-  shaderProgram = createShaderProgram(vertexShaderSource,
-                                      fragmentShaderSource)
+  shaderProgram1 = createShaderProgram(vertexShaderSource,
+                                       fragmentShaderSource1)
+
+  shaderProgram2 = createShaderProgram(vertexShaderSource,
+                                       fragmentShaderSource2)
 
   setupVertexData(vao1.addr, vbo1.addr,
                   vertices1[0].addr, GLsizeiptr(sizeof(vertices1)))
@@ -185,12 +199,13 @@ proc draw() =
   glClearColor(0.2, 0.3, 0.3, 1.0)
   glClear(GL_COLOR_BUFFER_BIT)
 
-  # Draw triangles
-  glUseProgram(shaderProgram)
-
+  # Draw orange triangle
+  glUseProgram(shaderProgram1)
   glBindVertexArray(vao1)
   glDrawArrays(GL_TRIANGLES, first = 0, count = 6)
 
+  # Draw yellow triangle
+  glUseProgram(shaderProgram2)
   glBindVertexArray(vao2)
   glDrawArrays(GL_TRIANGLES, first = 0, count = 6)
 
