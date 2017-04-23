@@ -16,10 +16,10 @@ Requires [nim-glfw](https://github.com/ephja/nim-glfw),
 The easiest way to install the dependencies is with Nimble:
 
 ```
-nimble nim-glfw glm sbt_image
+nimble nim-glfw glm stb_image
 ```
 
-Then you can compile & run any of the examples from their respective
+Then you can compile and run any of the examples from their respective
 directories, e.g:
 
 ```
@@ -29,15 +29,15 @@ nim c -r Shader1.nim
 
 ## Linux notes
 
-On Linux the header files required by GLFW aren't usually part of the base
-install like on Windows and OS X, so make sure to install them using the
-following command:
+On Linux, the header files required by GLFW aren't usually part of the base
+install like on Windows and OS X, so make sure to install them first. On
+Debian, I managed to do that with the following command:using the
 
 ```
 sudo apt-get install xorg-dev libglu1-mesa libglu1-mesa-dev mesa-common-dev
 ```
 
-With this I was able to compile the code, but unfortunately I could not
+After this I was able to compile the sources, but unfortunately I could not
 actually test them because I'm using Linux in VirtualBox which only supports
-OpenGL 2.1.
+OpenGL 2.1. Everything should work, but no guarantees.
 
