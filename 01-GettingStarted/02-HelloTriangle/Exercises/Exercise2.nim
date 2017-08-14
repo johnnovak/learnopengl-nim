@@ -1,3 +1,9 @@
+# Now create the same 2 triangles using two different VAOs and VBOs for their
+# data.
+#
+# Read the accompanying article at
+# https://learnopengl.com/#!Getting-started/Hello-Triangle
+
 import math
 
 import glm
@@ -6,12 +12,42 @@ import glfw
 import glfw/wrapper
 
 
-proc keyCb(w: Win, key: Key, scanCode: int, action: KeyAction,
-           modKeys: ModifierKeySet) =
+var vertices1 = [
+  GLfloat(-0.7),-0.3, 0.0,
+          -0.1, -0.3, 0.0,
+          -0.4,  0.3, 0.0
+]
 
-  if action != kaUp:
-    if key == keyEscape:
-      w.shouldClose = true
+var vertices2 = [
+  GLfloat( 0.1),-0.3, 0.0,
+           0.7, -0.3, 0.0,
+           0.4,  0.3, 0.0
+]
+
+let vertexShaderSource = """
+#version 330 core
+
+layout (location = 0) in vec3 position;
+
+void main()
+{
+    gl_Position = vec4(position.x, position.y, position.z, 1.0);
+}
+"""
+
+let fragmentShaderSource = """
+#version 330 core
+
+out vec4 color;
+
+void main()
+{
+    color = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+}
+"""
+
+var
+  vao1, vao2, vbo1, vbo2, shaderProgram: GLuint
 
 
 proc compileShader(shaderType: GLenum, source: string): GLuint =
@@ -84,44 +120,6 @@ proc createShaderProgram(vertexShaderSource,
   glDeleteShader(fragmentShader)
 
   result = shaderProgram
-
-
-var vertices1 = [
-  GLfloat(-0.7),-0.3, 0.0,
-          -0.1, -0.3, 0.0,
-          -0.4,  0.3, 0.0
-]
-
-var vertices2 = [
-  GLfloat( 0.1),-0.3, 0.0,
-           0.7, -0.3, 0.0,
-           0.4,  0.3, 0.0
-]
-
-let vertexShaderSource = """
-#version 330 core
-
-layout (location = 0) in vec3 position;
-
-void main()
-{
-    gl_Position = vec4(position.x, position.y, position.z, 1.0);
-}
-"""
-
-let fragmentShaderSource = """
-#version 330 core
-
-out vec4 color;
-
-void main()
-{
-    color = vec4(1.0f, 0.5f, 0.2f, 1.0f);
-}
-"""
-
-var
-  vao1, vao2, vbo1, vbo2, shaderProgram: GLuint
 
 
 proc setupVertexData(vao, vbo: ptr GLuint,
@@ -197,6 +195,14 @@ proc draw() =
   glBindVertexArray(GL_NONE)
 
 
+proc keyCb(w: Win, key: Key, scanCode: int, action: KeyAction,
+           modKeys: ModifierKeySet) =
+
+  if action != kaUp:
+    if key == keyEscape:
+      w.shouldClose = true
+
+
 proc main() =
   # Initialise GLFW
   glfw.init()
@@ -204,7 +210,7 @@ proc main() =
   # Create window
   let win = newGlWin(
     dim = (w: 800, h: 600),
-    title = "Hello Triangle1",
+    title = "Exercise2",
     resizable = false,
     bits = (r: 8, g: 8, b: 8, a: 8, stencil: 8, depth: 16),
     version = glv33,

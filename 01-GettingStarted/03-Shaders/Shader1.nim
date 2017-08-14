@@ -1,3 +1,6 @@
+# Read the accompanying article at
+# https://learnopengl.com/#!Getting-started/Shaders
+
 import math
 
 import glm
@@ -5,15 +8,7 @@ import glad/gl
 import glfw
 import glfw/wrapper
 
-import shader
-
-
-proc keyCb(w: Win, key: Key, scanCode: int, action: KeyAction,
-           modKeys: ModifierKeySet) =
-
-  if action != kaUp:
-    if key == keyEscape:
-      w.shouldClose = true
+import common/shader
 
 
 var vertices = [
@@ -81,6 +76,14 @@ proc draw() =
   glBindVertexArray(GL_NONE)
 
 
+proc keyCb(w: Win, key: Key, scanCode: int, action: KeyAction,
+           modKeys: ModifierKeySet) =
+
+  if action != kaUp:
+    if key == keyEscape:
+      w.shouldClose = true
+
+
 proc main() =
   # Initialise GLFW
   glfw.init()
@@ -88,7 +91,7 @@ proc main() =
   # Create window
   let win = newGlWin(
     dim = (w: 800, h: 600),
-    title = "Hello Triangle1",
+    title = "Shader1",
     resizable = false,
     bits = (r: 8, g: 8, b: 8, a: 8, stencil: 8, depth: 16),
     version = glv33,

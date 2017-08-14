@@ -1,9 +1,17 @@
+# Read the accompanying article at
+# https://learnopengl.com/#!Getting-started/Hello-Window
+
 import math
 
 import glm
 import glad/gl
 import glfw
 import glfw/wrapper
+
+
+proc draw() =
+  glClearColor(0.2, 0.3, 0.3, 1.0)
+  glClear(GL_COLOR_BUFFER_BIT)
 
 
 proc keyCb(w: Win, key: Key, scanCode: int, action: KeyAction,
@@ -14,11 +22,6 @@ proc keyCb(w: Win, key: Key, scanCode: int, action: KeyAction,
       w.shouldClose = true
 
 
-proc draw() =
-  glClearColor(0.2, 0.3, 0.3, 1.0)
-  glClear(GL_COLOR_BUFFER_BIT)
-
-
 proc main() =
   # Initialise GLFW
   glfw.init()
@@ -26,7 +29,7 @@ proc main() =
   # Create window
   var win = newGlWin(
     dim = (w: 800, h: 600),
-    title = "Hello Window",
+    title = "HelloWindow",
     resizable = false,
     bits = (r: 8, g: 8, b: 8, a: 8, stencil: 8, depth: 16),
     version = glv33,

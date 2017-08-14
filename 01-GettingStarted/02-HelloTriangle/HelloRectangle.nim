@@ -1,3 +1,6 @@
+# Read the accompanying article at
+# https://learnopengl.com/#!Getting-started/Hello-Triangle
+
 import math
 
 import glm
@@ -6,12 +9,42 @@ import glfw
 import glfw/wrapper
 
 
-proc keyCb(w: Win, key: Key, scanCode: int, action: KeyAction,
-           modKeys: ModifierKeySet) =
+var vertices = [
+   GLfloat(0.5), 0.5, 0.0,  # top right
+           0.5, -0.5, 0.0,  # bottom right
+          -0.5, -0.5, 0.0,  # bottom left
+          -0.5,  0.5, 0.0   # top left
+]
 
-  if action != kaUp:
-    if key == keyEscape:
-      w.shouldClose = true
+var indices = [
+  GLuint(0), 1, 3,  # first triangle
+         1,  2, 3   # second triangle
+]
+
+let vertexShaderSource = """
+#version 330 core
+
+layout (location = 0) in vec3 position;
+
+void main()
+{
+    gl_Position = vec4(position.x, position.y, position.z, 1.0);
+}
+"""
+
+let fragmentShaderSource = """
+#version 330 core
+
+out vec4 color;
+
+void main()
+{
+    color = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+}
+"""
+
+var
+  ebo, vao, vbo, shaderProgram: GLuint
 
 
 proc compileShader(shaderType: GLenum, source: string): GLuint =
@@ -86,42 +119,12 @@ proc createShaderProgram(vertexShaderSource,
   result = shaderProgram
 
 
-var vertices = [
-   GLfloat(0.5), 0.5, 0.0,  # top right
-           0.5, -0.5, 0.0,  # bottom right
-          -0.5, -0.5, 0.0,  # bottom left
-          -0.5,  0.5, 0.0   # top left
-]
+proc keyCb(w: Win, key: Key, scanCode: int, action: KeyAction,
+           modKeys: ModifierKeySet) =
 
-var indices = [
-  GLuint(0), 1, 3,  # first triangle
-         1,  2, 3   # second triangle
-]
-
-let vertexShaderSource = """
-#version 330 core
-
-layout (location = 0) in vec3 position;
-
-void main()
-{
-    gl_Position = vec4(position.x, position.y, position.z, 1.0);
-}
-"""
-
-let fragmentShaderSource = """
-#version 330 core
-
-out vec4 color;
-
-void main()
-{
-    color = vec4(1.0f, 0.5f, 0.2f, 1.0f);
-}
-"""
-
-var
-  ebo, vao, vbo, shaderProgram: GLuint
+  if action != kaUp:
+    if key == keyEscape:
+      w.shouldClose = true
 
 
 proc setup() =
@@ -197,7 +200,7 @@ proc main() =
   # Create window
   let win = newGlWin(
     dim = (w: 800, h: 600),
-    title = "Hello Triangle1",
+    title = "HelloRectangle",
     resizable = false,
     bits = (r: 8, g: 8, b: 8, a: 8, stencil: 8, depth: 16),
     version = glv33,
