@@ -10,6 +10,7 @@ import glfw/wrapper
 import stb_image/read as stbi
 
 import common/shader
+import common/fpscamera
 
 
 var vertices = [
@@ -77,31 +78,19 @@ const
   SCREEN_WIDTH = 800
   SCREEN_HEIGHT = 600
 
-let
-  cameraFrontStart = vec3[GLfloat](0.0, 0.0, -1.0)
-
-  cursorSensitivity = 0.1
-  cameraSpeedFactor = 2.5
-
 var
-  cameraPos   = vec3[GLfloat](0.0, 0.0,  3.0)
-  cameraFront = vec3[GLfloat](0.0, 0.0, -1.0)
-  cameraUp    = vec3[GLfloat](0.0, 1.0,  0.0)
-
-  cameraSpeed = 0.05
-
-  yaw = 0.0
-  pitch = 0.0
-
-  fov = 45.0
   lastXPos = 0.0
   lastYPos = 0.0
   lastFrameTime = 0.0
 
+let
+  camera = newFpsCamera(pos = vec3[GLfloat](0.0, 0.0, 3.0),
+                        yaw = 0.0, pitch = 0.0)
+
 
 proc setup() =
-  shaderProgram = createShaderProgramFromFile("camera2.vs",
-                                              "camera2.fs")
+  shaderProgram = createShaderProgramFromFile("camera4.vs",
+                                              "camera4.fs")
 
   glGenVertexArrays(1, vao.addr)
   glGenBuffers(1, vbo.addr)
@@ -207,14 +196,6 @@ proc cleanup() =
 
 
 proc draw() =
-  let
-    t = getTime()
-    dt = getTime() - lastFrameTime
-
-  lastFrameTime = t
-
-  cameraSpeed = cameraSpeedFactor * dt
-
   # Clear the color buffer
   glClearColor(0.2, 0.3, 0.3, 1.0)
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
@@ -231,13 +212,12 @@ proc draw() =
   shaderProgram.setUniform1i("tex2", 1)
 
   # Set view matrix
-  var view = lookAt(cameraPos, cameraPos + cameraFront, cameraUp)
-
+  var view = camera.getViewMatrix()
   shaderProgram.setUniformMatrix4fv("view", view.caddr)
 
   # Set projection matrix
   var projection = perspective[GLfloat](
-    fovy = degToRad(fov),
+    fovy = degToRad(camera.fov),
     aspect = SCREEN_WIDTH / SCREEN_HEIGHT,
     zNear = 0.1, zFar = 100.0)
 
@@ -259,18 +239,39 @@ proc draw() =
   glBindVertexArray(GL_NONE)
 
 
+proc cursorPosCb(win: Win, pos: tuple[x, y: float64]) =
+  let
+    xoffs = pos.x - lastXPos
+    yoffs = pos.y - lastYPos
+
+  lastXPos = pos.x
+  lastYPos = pos.y
+
+  camera.headLook(xoffs, yoffs)
+
+
+proc scrollCb(win: Win, offset: tuple[x, y: float64]) =
+  camera.zoom(offset.y)
+
+
 proc processInput(w: Win) =
+  let
+    currFrameTime = getTime()
+    dt = currFrameTime - lastFrameTime
+
+  lastFrameTime = currFrameTime
+
   if w.isKeyDown(keyEscape):
       w.shouldClose = true
 
   if w.isKeyDown(keyW):
-    cameraPos += cameraFront * cameraSpeed
+    camera.move(cmForward, dt)
   if w.isKeyDown(keyS):
-    cameraPos -= cameraFront * cameraSpeed
+    camera.move(cmBackward, dt)
   if w.isKeyDown(keyA):
-    cameraPos += normalize(cross(cameraUp, cameraFront)) * cameraSpeed
+    camera.move(cmLeft, dt)
   if w.isKeyDown(keyD):
-    cameraPos -= normalize(cross(cameraUp, cameraFront)) * cameraSpeed
+    camera.move(cmRight, dt)
 
 
 proc main() =
@@ -304,6 +305,10 @@ proc main() =
 
   # Turn on vsync (0 turns it off)
   glfw.swapInterval(1)
+
+  # Setup callbacks
+  win.cursorPosCb = cursorPosCb
+  win.scrollCb = scrollCb
 
   # Setup shaders and various OpenGL objects
   setup()

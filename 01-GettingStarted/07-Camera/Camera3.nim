@@ -77,12 +77,26 @@ const
   SCREEN_WIDTH = 800
   SCREEN_HEIGHT = 600
 
-let cameraSpeed = 0.05
+let
+  cameraFrontStart = vec3[GLfloat](0.0, 0.0, -1.0)
+
+  cursorSensitivity = 0.1
+  cameraSpeedFactor = 2.5
 
 var
   cameraPos   = vec3[GLfloat](0.0, 0.0,  3.0)
   cameraFront = vec3[GLfloat](0.0, 0.0, -1.0)
   cameraUp    = vec3[GLfloat](0.0, 1.0,  0.0)
+
+  cameraSpeed = 0.05
+
+  yaw = 0.0
+  pitch = 0.0
+
+  fov = 45.0
+  lastXPos = 0.0
+  lastYPos = 0.0
+  lastFrameTime = 0.0
 
 
 proc setup() =
@@ -193,6 +207,14 @@ proc cleanup() =
 
 
 proc draw() =
+  let
+    t = getTime()
+    dt = getTime() - lastFrameTime
+
+  lastFrameTime = t
+
+  cameraSpeed = cameraSpeedFactor * dt
+
   # Clear the color buffer
   glClearColor(0.2, 0.3, 0.3, 1.0)
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
@@ -209,18 +231,13 @@ proc draw() =
   shaderProgram.setUniform1i("tex2", 1)
 
   # Set view matrix
-  let
-    t = getTime()
-    radius = 10.0
-    camX = GLfloat(sin(t) * radius)
-    camZ = GLfloat(cos(t) * radius)
-
   var view = lookAt(cameraPos, cameraPos + cameraFront, cameraUp)
+
   shaderProgram.setUniformMatrix4fv("view", view.caddr)
 
   # Set projection matrix
   var projection = perspective[GLfloat](
-    fovy = degToRad(45.0),
+    fovy = degToRad(fov),
     aspect = SCREEN_WIDTH / SCREEN_HEIGHT,
     zNear = 0.1, zFar = 100.0)
 
@@ -242,23 +259,49 @@ proc draw() =
   glBindVertexArray(GL_NONE)
 
 
-proc keyCb(w: Win, key: Key, scanCode: int, action: KeyAction,
-           modKeys: ModifierKeySet) =
+proc cursorPosCb(win: Win, pos: tuple[x, y: float64]) =
+  let
+    dx = (pos.x - lastXPos) * cursorSensitivity
+    dy = (pos.y - lastYPos) * cursorSensitivity
 
-  if action != kaUp:
-    case key:
-    of keyEscape:
+  yaw += dx
+  if yaw > 360.0:
+    yaw -= 360.0
+  if yaw < -360:
+    yaw += 360.0
+
+  pitch = max(min(pitch + dy, 89.0), -89.0)
+
+  var tx = mat4(GLfloat(1.0))
+             .rotate(vec3(GLfloat(1.0), 0.0, 0.0), degToRad(pitch))
+             .rotate(vec3(GLfloat(0.0), 1.0, 0.0), degToRad(yaw))
+
+  cameraFront = (vec4(cameraFrontStart, 0.0) * tx).xyz
+
+  lastXPos = pos.x
+  lastYPos = pos.y
+
+
+proc scrollCb(win: Win, offset: tuple[x, y: float64]) =
+  let
+    minFov = 1.0
+    maxFov = 45.0
+
+  fov = max(min(fov - offset.y, maxFov), minFov)
+
+
+proc processInput(w: Win) =
+  if w.isKeyDown(keyEscape):
       w.shouldClose = true
-    of keyW:
-      cameraPos += cameraFront * cameraSpeed
-    of keyS:
-      cameraPos -= cameraFront * cameraSpeed
-    of keyA:
-      cameraPos -= normalize(cross(cameraUp, cameraFront)) * cameraSpeed
-    of keyD:
-      cameraPos += normalize(cross(cameraUp, cameraFront)) * cameraSpeed
-    else:
-      discard
+
+  if w.isKeyDown(keyW):
+    cameraPos += cameraFront * cameraSpeed
+  if w.isKeyDown(keyS):
+    cameraPos -= cameraFront * cameraSpeed
+  if w.isKeyDown(keyA):
+    cameraPos += normalize(cross(cameraUp, cameraFront)) * cameraSpeed
+  if w.isKeyDown(keyD):
+    cameraPos -= normalize(cross(cameraUp, cameraFront)) * cameraSpeed
 
 
 proc main() =
@@ -282,6 +325,9 @@ proc main() =
   if not gladLoadGL(getProcAddress):
     quit "Error initialising OpenGL"
 
+  # Hide and capture mouse cursor
+  win.cursorMode = cmDisabled
+
   # Define viewport dimensions
   var width, height: int
   (width, height) = framebufSize(win)
@@ -291,7 +337,8 @@ proc main() =
   glfw.swapInterval(1)
 
   # Setup callbacks
-  win.keyCb = keyCb
+  win.cursorPosCb = cursorPosCb
+  win.scrollCb = scrollCb
 
   # Setup shaders and various OpenGL objects
   setup()
@@ -299,6 +346,7 @@ proc main() =
   # Game loop
   while not win.shouldClose:
     glfw.pollEvents()
+    processInput(win)
     draw()
     glfw.swapBufs(win)
 
