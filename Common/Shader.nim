@@ -1,3 +1,4 @@
+import glm
 import glad/gl
 
 
@@ -130,6 +131,13 @@ proc setUniform4f*(shaderProgram: GLuint, name: string,
                    v0, v1, v2, v3: GLfloat) =
   let location = glGetUniformLocation(shaderProgram, name)
   glUniform4f(location, v0, v1, v2, v3)
+
+
+# TODO do the rest
+proc setUniform3fv*(shaderProgram: GLuint, name: string,
+                    v: var Vec3[GLfloat]) =
+  let location = glGetUniformLocation(shaderProgram, name)
+  glUniform3fv(location, count = 1, v.caddr)
 
 
 # TODO use glm types

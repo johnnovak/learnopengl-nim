@@ -79,7 +79,7 @@ proc draw() =
   glClear(GL_COLOR_BUFFER_BIT)
 
   # Draw the triangle
-  glUseProgram(shaderProgram)
+  shaderProgram.use()
   glBindVertexArray(vao)
   glDrawArrays(GL_TRIANGLES, first = 0, count = 3)
   glBindVertexArray(GL_NONE)

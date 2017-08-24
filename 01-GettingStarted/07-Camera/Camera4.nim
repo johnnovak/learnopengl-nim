@@ -200,7 +200,7 @@ proc draw() =
   glClearColor(0.2, 0.3, 0.3, 1.0)
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-  glUseProgram(shaderProgram)
+  shaderProgram.use()
 
   # Bind textures using texture units
   glActiveTexture(GL_TEXTURE0)
@@ -281,7 +281,7 @@ proc main() =
   # Create window
   let win = newGlWin(
     dim = (w: SCREEN_WIDTH, h: SCREEN_HEIGHT),
-    title = "Coords3",
+    title = "Camera4",
     resizable = false,
     bits = (r: 8, g: 8, b: 8, a: 8, stencil: 8, depth: 16),
     version = glv33,
@@ -295,13 +295,13 @@ proc main() =
   if not gladLoadGL(getProcAddress):
     quit "Error initialising OpenGL"
 
-  # Hide and capture mouse cursor
-  win.cursorMode = cmDisabled
-
   # Define viewport dimensions
   var width, height: int
   (width, height) = framebufSize(win)
   glViewport(0, 0, GLint(width), GLint(height))
+
+  # Hide and capture mouse cursor
+  win.cursorMode = cmDisabled
 
   # Turn on vsync (0 turns it off)
   glfw.swapInterval(1)

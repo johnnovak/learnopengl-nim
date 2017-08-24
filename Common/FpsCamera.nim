@@ -48,6 +48,8 @@ proc newFpsCamera*(pos:   Vec3[GLfloat] = vec3[GLfloat](0.0, 0.0, 0.0),
 
   result.pos   = pos
   result.up    = up
+  result.yaw   = yaw
+  result.pitch = pitch
   result.front = vec3[GLfloat](0.0, 0.0, -1.0)
 
   result.updateCameraVectors()

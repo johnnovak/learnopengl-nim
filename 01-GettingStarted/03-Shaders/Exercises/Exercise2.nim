@@ -80,7 +80,7 @@ proc draw() =
   glClear(GL_COLOR_BUFFER_BIT)
 
   # Draw the triangle
-  glUseProgram(shaderProgram)
+  shaderProgram.use()
 
   var horizOffsetLocation = glGetUniformLocation(shaderProgram, "horizOffset")
   glUniform1f(horizOffsetLocation, 0.5)

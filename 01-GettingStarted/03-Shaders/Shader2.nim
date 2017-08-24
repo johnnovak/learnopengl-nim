@@ -70,7 +70,7 @@ proc draw() =
   glClear(GL_COLOR_BUFFER_BIT)
 
   # Activate the shader
-  glUseProgram(shaderProgram)
+  shaderProgram.use()
 
   # Update the uniform color
   var

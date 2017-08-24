@@ -14,48 +14,48 @@ import common/fpscamera
 
 
 var vertices = [
-  # Positions
-  GLfloat(-0.5),-0.5, -0.5,
-           0.5, -0.5, -0.5,
-           0.5,  0.5, -0.5,
-           0.5,  0.5, -0.5,
-          -0.5,  0.5, -0.5,
-          -0.5, -0.5, -0.5,
+  # Positions                # Normals
+  GLfloat(-0.5),-0.5, -0.5,  0.0,  0.0, -1.0,
+           0.5, -0.5, -0.5,  0.0,  0.0, -1.0,
+           0.5,  0.5, -0.5,  0.0,  0.0, -1.0,
+           0.5,  0.5, -0.5,  0.0,  0.0, -1.0,
+          -0.5,  0.5, -0.5,  0.0,  0.0, -1.0,
+          -0.5, -0.5, -0.5,  0.0,  0.0, -1.0,
 
-          -0.5, -0.5,  0.5,
-           0.5, -0.5,  0.5,
-           0.5,  0.5,  0.5,
-           0.5,  0.5,  0.5,
-          -0.5,  0.5,  0.5,
-          -0.5, -0.5,  0.5,
+          -0.5, -0.5,  0.5,  0.0,  0.0,  1.0,
+           0.5, -0.5,  0.5,  0.0,  0.0,  1.0,
+           0.5,  0.5,  0.5,  0.0,  0.0,  1.0,
+           0.5,  0.5,  0.5,  0.0,  0.0,  1.0,
+          -0.5,  0.5,  0.5,  0.0,  0.0,  1.0,
+          -0.5, -0.5,  0.5,  0.0,  0.0,  1.0,
 
-          -0.5,  0.5,  0.5,
-          -0.5,  0.5, -0.5,
-          -0.5, -0.5, -0.5,
-          -0.5, -0.5, -0.5,
-          -0.5, -0.5,  0.5,
-          -0.5,  0.5,  0.5,
+          -0.5,  0.5,  0.5, -1.0,  0.0,  0.0,
+          -0.5,  0.5, -0.5, -1.0,  0.0,  0.0,
+          -0.5, -0.5, -0.5, -1.0,  0.0,  0.0,
+          -0.5, -0.5, -0.5, -1.0,  0.0,  0.0,
+          -0.5, -0.5,  0.5, -1.0,  0.0,  0.0,
+          -0.5,  0.5,  0.5, -1.0,  0.0,  0.0,
 
-           0.5,  0.5,  0.5,
-           0.5,  0.5, -0.5,
-           0.5, -0.5, -0.5,
-           0.5, -0.5, -0.5,
-           0.5, -0.5,  0.5,
-           0.5,  0.5,  0.5,
+           0.5,  0.5,  0.5,  1.0,  0.0,  0.0,
+           0.5,  0.5, -0.5,  1.0,  0.0,  0.0,
+           0.5, -0.5, -0.5,  1.0,  0.0,  0.0,
+           0.5, -0.5, -0.5,  1.0,  0.0,  0.0,
+           0.5, -0.5,  0.5,  1.0,  0.0,  0.0,
+           0.5,  0.5,  0.5,  1.0,  0.0,  0.0,
 
-          -0.5, -0.5, -0.5,
-           0.5, -0.5, -0.5,
-           0.5, -0.5,  0.5,
-           0.5, -0.5,  0.5,
-          -0.5, -0.5,  0.5,
-          -0.5, -0.5, -0.5,
+          -0.5, -0.5, -0.5,  0.0, -1.0,  0.0,
+           0.5, -0.5, -0.5,  0.0, -1.0,  0.0,
+           0.5, -0.5,  0.5,  0.0, -1.0,  0.0,
+           0.5, -0.5,  0.5,  0.0, -1.0,  0.0,
+          -0.5, -0.5,  0.5,  0.0, -1.0,  0.0,
+          -0.5, -0.5, -0.5,  0.0, -1.0,  0.0,
 
-          -0.5,  0.5, -0.5,
-           0.5,  0.5, -0.5,
-           0.5,  0.5,  0.5,
-           0.5,  0.5,  0.5,
-          -0.5,  0.5,  0.5,
-          -0.5,  0.5, -0.5
+          -0.5,  0.5, -0.5,  0.0,  1.0,  0.0,
+           0.5,  0.5, -0.5,  0.0,  1.0,  0.0,
+           0.5,  0.5,  0.5,  0.0,  1.0,  0.0,
+           0.5,  0.5,  0.5,  0.0,  1.0,  0.0,
+          -0.5,  0.5,  0.5,  0.0,  1.0,  0.0,
+          -0.5,  0.5, -0.5,  0.0,  1.0,  0.0
 ]
 
 var
@@ -70,7 +70,6 @@ var
   lastYPos = 0.0
   lastFrameTime = 0.0
 
-let
   camera = newFpsCamera(pos = vec3[GLfloat](-4.0, 0.0, 3.0),
                         yaw = 60.0, pitch = 0.0)
 
@@ -78,7 +77,7 @@ let
 
 
 proc setup() =
-  lightingShader = createShaderProgramFromFile("colors1.vs", "colors1.fs")
+  lightingShader = createShaderProgramFromFile("colors2.vs", "colors2.fs")
   lampShader = createShaderProgramFromFile("lamp.vs", "lamp.fs")
 
   glGenBuffers(1, vbo.addr)
@@ -92,13 +91,22 @@ proc setup() =
                vertices.addr, GL_STATIC_DRAW)
 
   # Position attribute
-  var stride = GLsizei(3 * sizeof(GLfloat))
+  var stride = GLsizei(6 * sizeof(GLfloat))
 
   glVertexAttribPointer(index = 0, size = 3, type = cGL_FLOAT,
                         normalized = false, stride,
                         pointer = cast[pointer](0))
 
   glEnableVertexAttribArray(0)
+
+  # Normal attribute
+  stride = GLsizei(6 * sizeof(GLfloat))
+
+  glVertexAttribPointer(index = 1, size = 3, type = cGL_FLOAT,
+                        normalized = false, stride,
+                        pointer = cast[pointer](3 * sizeof(GLfloat)))
+
+  glEnableVertexAttribArray(1)
 
   # Configure the light object's VAO (VBO stays the same; the vertices are the
   # same for the light object which is also a 3D cube)
@@ -139,6 +147,7 @@ proc draw() =
   lightingShader.use()
   lightingShader.setUniform3f("objectColor", 1.0, 0.5, 0.3)
   lightingShader.setUniform3f("lightColor",  1.0, 1.0, 1.0)
+  lightingShader.setUniform3fv("lightPos", lightPos)
 
   # Set model matrix
   var model = mat4(GLfloat(1.0))
@@ -219,7 +228,7 @@ proc main() =
   # Create window
   let win = newGlWin(
     dim = (w: SCREEN_WIDTH, h: SCREEN_HEIGHT),
-    title = "Colors1",
+    title = "Colors2",
     resizable = false,
     bits = (r: 8, g: 8, b: 8, a: 8, stencil: 8, depth: 16),
     version = glv33,

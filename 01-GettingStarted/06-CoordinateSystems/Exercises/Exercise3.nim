@@ -193,7 +193,7 @@ proc draw() =
   glClearColor(0.2, 0.3, 0.3, 1.0)
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-  glUseProgram(shaderProgram)
+  shaderProgram.use()
 
   # Bind textures using texture units
   glActiveTexture(GL_TEXTURE0)

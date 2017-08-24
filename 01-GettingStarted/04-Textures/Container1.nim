@@ -121,7 +121,7 @@ proc draw() =
 
   glBindTexture(GL_TEXTURE_2D, texture)
 
-  glUseProgram(shaderProgram)
+  shaderProgram.use()
 
   glBindVertexArray(vao)
   glDrawElements(GL_TRIANGLES, count = GLsizei(6), GL_UNSIGNED_INT,
