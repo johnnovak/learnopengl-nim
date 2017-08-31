@@ -1,3 +1,5 @@
+# Do Phong shading in view space instead of world space.
+#
 # Read the accompanying article at
 # https://learnopengl.com/#!Getting-started/Camera
 
@@ -14,48 +16,48 @@ import common/fpscamera
 
 
 var vertices = [
-  # Positions
-  GLfloat(-0.5),-0.5, -0.5,
-           0.5, -0.5, -0.5,
-           0.5,  0.5, -0.5,
-           0.5,  0.5, -0.5,
-          -0.5,  0.5, -0.5,
-          -0.5, -0.5, -0.5,
+  # Positions                # Normals
+  GLfloat(-0.5),-0.5, -0.5,  0.0,  0.0, -1.0,
+           0.5, -0.5, -0.5,  0.0,  0.0, -1.0,
+           0.5,  0.5, -0.5,  0.0,  0.0, -1.0,
+           0.5,  0.5, -0.5,  0.0,  0.0, -1.0,
+          -0.5,  0.5, -0.5,  0.0,  0.0, -1.0,
+          -0.5, -0.5, -0.5,  0.0,  0.0, -1.0,
 
-          -0.5, -0.5,  0.5,
-           0.5, -0.5,  0.5,
-           0.5,  0.5,  0.5,
-           0.5,  0.5,  0.5,
-          -0.5,  0.5,  0.5,
-          -0.5, -0.5,  0.5,
+          -0.5, -0.5,  0.5,  0.0,  0.0,  1.0,
+           0.5, -0.5,  0.5,  0.0,  0.0,  1.0,
+           0.5,  0.5,  0.5,  0.0,  0.0,  1.0,
+           0.5,  0.5,  0.5,  0.0,  0.0,  1.0,
+          -0.5,  0.5,  0.5,  0.0,  0.0,  1.0,
+          -0.5, -0.5,  0.5,  0.0,  0.0,  1.0,
 
-          -0.5,  0.5,  0.5,
-          -0.5,  0.5, -0.5,
-          -0.5, -0.5, -0.5,
-          -0.5, -0.5, -0.5,
-          -0.5, -0.5,  0.5,
-          -0.5,  0.5,  0.5,
+          -0.5,  0.5,  0.5, -1.0,  0.0,  0.0,
+          -0.5,  0.5, -0.5, -1.0,  0.0,  0.0,
+          -0.5, -0.5, -0.5, -1.0,  0.0,  0.0,
+          -0.5, -0.5, -0.5, -1.0,  0.0,  0.0,
+          -0.5, -0.5,  0.5, -1.0,  0.0,  0.0,
+          -0.5,  0.5,  0.5, -1.0,  0.0,  0.0,
 
-           0.5,  0.5,  0.5,
-           0.5,  0.5, -0.5,
-           0.5, -0.5, -0.5,
-           0.5, -0.5, -0.5,
-           0.5, -0.5,  0.5,
-           0.5,  0.5,  0.5,
+           0.5,  0.5,  0.5,  1.0,  0.0,  0.0,
+           0.5,  0.5, -0.5,  1.0,  0.0,  0.0,
+           0.5, -0.5, -0.5,  1.0,  0.0,  0.0,
+           0.5, -0.5, -0.5,  1.0,  0.0,  0.0,
+           0.5, -0.5,  0.5,  1.0,  0.0,  0.0,
+           0.5,  0.5,  0.5,  1.0,  0.0,  0.0,
 
-          -0.5, -0.5, -0.5,
-           0.5, -0.5, -0.5,
-           0.5, -0.5,  0.5,
-           0.5, -0.5,  0.5,
-          -0.5, -0.5,  0.5,
-          -0.5, -0.5, -0.5,
+          -0.5, -0.5, -0.5,  0.0, -1.0,  0.0,
+           0.5, -0.5, -0.5,  0.0, -1.0,  0.0,
+           0.5, -0.5,  0.5,  0.0, -1.0,  0.0,
+           0.5, -0.5,  0.5,  0.0, -1.0,  0.0,
+          -0.5, -0.5,  0.5,  0.0, -1.0,  0.0,
+          -0.5, -0.5, -0.5,  0.0, -1.0,  0.0,
 
-          -0.5,  0.5, -0.5,
-           0.5,  0.5, -0.5,
-           0.5,  0.5,  0.5,
-           0.5,  0.5,  0.5,
-          -0.5,  0.5,  0.5,
-          -0.5,  0.5, -0.5
+          -0.5,  0.5, -0.5,  0.0,  1.0,  0.0,
+           0.5,  0.5, -0.5,  0.0,  1.0,  0.0,
+           0.5,  0.5,  0.5,  0.0,  1.0,  0.0,
+           0.5,  0.5,  0.5,  0.0,  1.0,  0.0,
+          -0.5,  0.5,  0.5,  0.0,  1.0,  0.0,
+          -0.5,  0.5, -0.5,  0.0,  1.0,  0.0
 ]
 
 var
@@ -70,15 +72,18 @@ var
   lastYPos = 0.0
   lastFrameTime = 0.0
 
-let
   camera = newFpsCamera(pos = vec3[GLfloat](-4.0, 0.0, 3.0),
                         yaw = 60.0, pitch = 0.0)
 
-  lightPos = vec3[GLfloat](1.2, 1.0, 2.0)
+  ambientStrength: GLfloat = 0.1
+  diffuseStrength: GLfloat = 1.0
+  specularStrength: GLfloat = 0.5
+  shininessFactor: GLfloat = 32.0
 
 
 proc setup() =
-  lightingShader = createShaderProgramFromFile("colors1.vs", "colors1.fs")
+  lightingShader = createShaderProgramFromFile("exercise3.vs",
+                                               "exercise3.fs")
   lampShader = createShaderProgramFromFile("lamp.vs", "lamp.fs")
 
   glGenBuffers(1, vbo.addr)
@@ -92,13 +97,22 @@ proc setup() =
                vertices.addr, GL_STATIC_DRAW)
 
   # Position attribute
-  var stride = GLsizei(3 * sizeof(GLfloat))
+  var stride = GLsizei(6 * sizeof(GLfloat))
 
   glVertexAttribPointer(index = 0, size = 3, type = cGL_FLOAT,
                         normalized = false, stride,
                         pointer = cast[pointer](0))
 
   glEnableVertexAttribArray(0)
+
+  # Normal attribute
+  stride = GLsizei(6 * sizeof(GLfloat))
+
+  glVertexAttribPointer(index = 1, size = 3, type = cGL_FLOAT,
+                        normalized = false, stride,
+                        pointer = cast[pointer](3 * sizeof(GLfloat)))
+
+  glEnableVertexAttribArray(1)
 
   # Configure the light object's VAO (VBO stays the same; the vertices are the
   # same for the light object which is also a 3D cube)
@@ -136,9 +150,21 @@ proc draw() =
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
   # Draw container
+  let t = getTime()
+  var lightPos = vec3[GLfloat](cos(t) * 2.0,
+                               cos(t / 4) * 1.0,
+                               sin(t) * 2.0)
+
   lightingShader.use()
   lightingShader.setUniform3f("objectColor", 1.0, 0.5, 0.3)
   lightingShader.setUniform3f("lightColor",  1.0, 1.0, 1.0)
+  lightingShader.setUniform3fv("lightPos", lightPos)
+  lightingShader.setUniform3fv("viewPos", camera.pos)
+
+  lightingShader.setUniform1f("ambientStrength", ambientStrength)
+  lightingShader.setUniform1f("specularStrength", specularStrength)
+  lightingShader.setUniform1f("diffuseStrength", diffuseStrength)
+  lightingShader.setUniform1f("shininessFactor", shininessFactor)
 
   # Set model matrix
   var model = mat4(GLfloat(1.0))
@@ -177,6 +203,43 @@ proc draw() =
   glBindVertexArray(GL_NONE)
 
 
+proc keyCb(w: Win, key: Key, scanCode: int, action: KeyAction,
+           modKeys: ModifierKeySet) =
+
+  if action == kaDown:
+    if key == keyEscape:
+      w.shouldClose = true
+
+    var d = 0.0
+
+    if key == keyV:
+      if mkShift in modKeys:
+        d = 0.5
+      else:
+        d = 2
+    else:
+      if mkShift in modKeys:
+        d = -0.1
+      else:
+        d = 0.1
+
+    case key:
+    of keyZ:
+      ambientStrength = min(max(ambientStrength + d, 0.0), 1.0)
+      echo "ambientStrength: " & $ambientStrength
+    of keyX:
+      specularStrength = min(max(specularStrength + d, 0.0), 1.0)
+      echo "specularStrength: " & $specularStrength
+    of keyC:
+      diffuseStrength = min(max(diffuseStrength + d, 0.0), 1.0)
+      echo "diffuseStrength: " & $diffuseStrength
+    of keyV:
+      shininessFactor = min(max(shininessFactor * d, 1), 1024)
+      echo "shininessFactor: " & $shininessFactor
+    else:
+      discard
+
+
 proc cursorPosCb(win: Win, pos: tuple[x, y: float64]) =
   let
     xoffs = pos.x - lastXPos
@@ -199,17 +262,10 @@ proc processInput(w: Win) =
 
   lastFrameTime = currFrameTime
 
-  if w.isKeyDown(keyEscape):
-      w.shouldClose = true
-
-  if w.isKeyDown(keyW):
-    camera.move(cmForward, dt)
-  if w.isKeyDown(keyS):
-    camera.move(cmBackward, dt)
-  if w.isKeyDown(keyA):
-    camera.move(cmLeft, dt)
-  if w.isKeyDown(keyD):
-    camera.move(cmRight, dt)
+  if w.isKeyDown(keyW): camera.move(cmForward, dt)
+  if w.isKeyDown(keyS): camera.move(cmBackward, dt)
+  if w.isKeyDown(keyA): camera.move(cmLeft, dt)
+  if w.isKeyDown(keyD): camera.move(cmRight, dt)
 
 
 proc main() =
@@ -219,7 +275,7 @@ proc main() =
   # Create window
   let win = newGlWin(
     dim = (w: SCREEN_WIDTH, h: SCREEN_HEIGHT),
-    title = "Colors1",
+    title = "BasicLighting - Exercise2",
     resizable = false,
     bits = (r: 8, g: 8, b: 8, a: 8, stencil: 8, depth: 16),
     version = glv33,
@@ -245,6 +301,7 @@ proc main() =
   glfw.swapInterval(1)
 
   # Setup callbacks
+  win.keyCb = keyCb
   win.cursorPosCb = cursorPosCb
   win.scrollCb = scrollCb
 

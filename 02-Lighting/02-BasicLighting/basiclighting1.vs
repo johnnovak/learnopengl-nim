@@ -15,8 +15,8 @@ void main()
     gl_Position = projection * view * model * vec4(aPosition, 1.0);
     fragPos = vec3(model * vec4(aNormal, 1.0));
 
-    // Calculating the inverse tranpose of the model matrix should be done
-    // once on the CPU and sent to the snader via an uniform; this is for
+    // Calculating the inverse transpose of the model matrix should be done
+    // once on the CPU and sent to the shader via an uniform; this is for
     // learning purposes only.
     normal = mat3(transpose(inverse(model))) * aNormal;
 }

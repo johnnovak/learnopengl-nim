@@ -77,7 +77,8 @@ var
 
 
 proc setup() =
-  lightingShader = createShaderProgramFromFile("colors2.vs", "colors2.fs")
+  lightingShader = createShaderProgramFromFile("basiclighting1.vs",
+                                               "basiclighting1.fs")
   lampShader = createShaderProgramFromFile("lamp.vs", "lamp.fs")
 
   glGenBuffers(1, vbo.addr)
@@ -228,7 +229,7 @@ proc main() =
   # Create window
   let win = newGlWin(
     dim = (w: SCREEN_WIDTH, h: SCREEN_HEIGHT),
-    title = "Colors2",
+    title = "BasicLighting1",
     resizable = false,
     bits = (r: 8, g: 8, b: 8, a: 8, stencil: 8, depth: 16),
     version = glv33,

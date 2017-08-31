@@ -1,2 +1,2 @@
-nim c Colors1.nim
+nim c Colors.nim
 

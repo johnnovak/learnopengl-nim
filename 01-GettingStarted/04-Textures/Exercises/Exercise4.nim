@@ -192,7 +192,7 @@ proc main() =
   # Create window
   let win = newGlWin(
     dim = (w: 800, h: 600),
-    title = "Exercise4",
+    title = "Textures - Exercise4",
     resizable = false,
     bits = (r: 8, g: 8, b: 8, a: 8, stencil: 8, depth: 16),
     version = glv33,

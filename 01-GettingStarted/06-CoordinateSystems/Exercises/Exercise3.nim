@@ -259,7 +259,7 @@ proc main() =
   # Create window
   let win = newGlWin(
     dim = (w: SCREEN_WIDTH, h: SCREEN_HEIGHT),
-    title = "Coords3",
+    title = "CoordinateSystems - Exercise3",
     resizable = false,
     bits = (r: 8, g: 8, b: 8, a: 8, stencil: 8, depth: 16),
     version = glv33,
