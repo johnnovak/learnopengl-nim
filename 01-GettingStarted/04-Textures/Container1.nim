@@ -6,7 +6,6 @@ import math
 import glm
 import glad/gl
 import glfw
-import glfw/wrapper
 import stb_image/read as stbi
 
 import common/shader
@@ -129,28 +128,29 @@ proc draw() =
   glBindVertexArray(GL_NONE)
 
 
-proc keyCb(w: Win, key: Key, scanCode: int, action: KeyAction,
-           modKeys: ModifierKeySet) =
+proc keyCb(win: Window, key: Key, scanCode: int32, action: KeyAction,
+           modKeys: set[ModifierKey]) =
 
   if action != kaUp:
     if key == keyEscape:
-      w.shouldClose = true
+      win.shouldClose = true
 
 
 proc main() =
   # Initialise GLFW
-  glfw.init()
+  glfw.initialize()
 
   # Create window
-  let win = newGlWin(
-    dim = (w: 800, h: 600),
-    title = "Container1",
-    resizable = false,
-    bits = (r: 8, g: 8, b: 8, a: 8, stencil: 8, depth: 16),
-    version = glv33,
-    profile = glpCore,
-    forwardCompat = true
-  )
+  var cfg = DefaultOpenglWindowConfig
+  cfg.size = (w: 800, h: 600)
+  cfg.title = "Container1"
+  cfg.resizable = false
+  cfg.bits = (r: 8, g: 8, b: 8, a: 8, stencil: 8, depth: 16)
+  cfg.version = glv33
+  cfg.profile = opCoreProfile
+  cfg.forwardCompat = true
+
+  var win = newWindow(cfg)
 
   # Initialise OpenGL
   glfw.makeContextCurrent(win)
@@ -160,7 +160,7 @@ proc main() =
 
   # Define viewport dimensions
   var width, height: int
-  (width, height) = framebufSize(win)
+  (width, height) = framebufferSize(win)
   glViewport(0, 0, GLint(width), GLint(height))
 
   # Turn on vsync (0 turns it off)
@@ -176,7 +176,7 @@ proc main() =
   while not win.shouldClose:
     glfw.pollEvents()
     draw()
-    glfw.swapBufs(win)
+    glfw.swapBuffers(win)
 
   # Properly de-allocate all resources once they've outlived their purpose
   cleanup()
