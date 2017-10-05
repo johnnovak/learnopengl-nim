@@ -6,7 +6,6 @@ import math
 import glm
 import glad/gl
 import glfw
-import glfw/wrapper
 import stb_image/read as stbi
 
 import common/shader
@@ -259,7 +258,7 @@ proc draw() =
   glBindVertexArray(GL_NONE)
 
 
-proc cursorPosCb(win: Win, pos: tuple[x, y: float64]) =
+proc cursorPosCb(win: Window, pos: tuple[x, y: float64]) =
   let
     dx = (pos.x - lastXPos) * cursorSensitivity
     dy = (pos.y - lastYPos) * cursorSensitivity
@@ -282,7 +281,7 @@ proc cursorPosCb(win: Win, pos: tuple[x, y: float64]) =
   lastYPos = pos.y
 
 
-proc scrollCb(win: Win, offset: tuple[x, y: float64]) =
+proc scrollCb(win: Window, offset: tuple[x, y: float64]) =
   let
     minFov = 1.0
     maxFov = 45.0
@@ -290,34 +289,35 @@ proc scrollCb(win: Win, offset: tuple[x, y: float64]) =
   fov = max(min(fov - offset.y, maxFov), minFov)
 
 
-proc processInput(w: Win) =
-  if w.isKeyDown(keyEscape):
-      w.shouldClose = true
+proc processInput(win: Window) =
+  if win.isKeyDown(keyEscape):
+      win.shouldClose = true
 
-  if w.isKeyDown(keyW):
+  if win.isKeyDown(keyW):
     cameraPos += cameraFront * cameraSpeed
-  if w.isKeyDown(keyS):
+  if win.isKeyDown(keyS):
     cameraPos -= cameraFront * cameraSpeed
-  if w.isKeyDown(keyA):
+  if win.isKeyDown(keyA):
     cameraPos += normalize(cross(cameraUp, cameraFront)) * cameraSpeed
-  if w.isKeyDown(keyD):
+  if win.isKeyDown(keyD):
     cameraPos -= normalize(cross(cameraUp, cameraFront)) * cameraSpeed
 
 
 proc main() =
   # Initialise GLFW
-  glfw.init()
+  glfw.initialize()
 
   # Create window
-  let win = newGlWin(
-    dim = (w: SCREEN_WIDTH, h: SCREEN_HEIGHT),
-    title = "Camera3",
-    resizable = false,
-    bits = (r: 8, g: 8, b: 8, a: 8, stencil: 8, depth: 16),
-    version = glv33,
-    profile = glpCore,
-    forwardCompat = true
-  )
+  var cfg = DefaultOpenglWindowConfig
+  cfg.size = (w: SCREEN_WIDTH, h: SCREEN_HEIGHT)
+  cfg.title = "07-Camera/Camera3"
+  cfg.resizable = false
+  cfg.bits = (r: 8, g: 8, b: 8, a: 8, stencil: 8, depth: 16)
+  cfg.version = glv33
+  cfg.profile = opCoreProfile
+  cfg.forwardCompat = true
+
+  var win = newWindow(cfg)
 
   # Initialise OpenGL
   glfw.makeContextCurrent(win)
@@ -330,14 +330,14 @@ proc main() =
 
   # Define viewport dimensions
   var width, height: int
-  (width, height) = framebufSize(win)
+  (width, height) = framebufferSize(win)
   glViewport(0, 0, GLint(width), GLint(height))
 
   # Turn on vsync (0 turns it off)
   glfw.swapInterval(1)
 
   # Setup callbacks
-  win.cursorPosCb = cursorPosCb
+  win.cursorPositionCb = cursorPosCb
   win.scrollCb = scrollCb
 
   # Setup shaders and various OpenGL objects
@@ -348,7 +348,7 @@ proc main() =
     glfw.pollEvents()
     processInput(win)
     draw()
-    glfw.swapBufs(win)
+    glfw.swapBuffers(win)
 
   # Properly de-allocate all resources once they've outlived their purpose
   cleanup()

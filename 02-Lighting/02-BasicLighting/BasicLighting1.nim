@@ -6,7 +6,6 @@ import math
 import glm
 import glad/gl
 import glfw
-import glfw/wrapper
 import stb_image/read as stbi
 
 import common/shader
@@ -187,7 +186,7 @@ proc draw() =
   glBindVertexArray(GL_NONE)
 
 
-proc cursorPosCb(win: Win, pos: tuple[x, y: float64]) =
+proc cursorPosCb(win: Window, pos: tuple[x, y: float64]) =
   let
     xoffs = pos.x - lastXPos
     yoffs = pos.y - lastYPos
@@ -198,44 +197,45 @@ proc cursorPosCb(win: Win, pos: tuple[x, y: float64]) =
   camera.headLook(xoffs, yoffs)
 
 
-proc scrollCb(win: Win, offset: tuple[x, y: float64]) =
+proc scrollCb(win: Window, offset: tuple[x, y: float64]) =
   camera.zoom(offset.y)
 
 
-proc processInput(w: Win) =
+proc processInput(win: Window) =
   let
     currFrameTime = getTime()
     dt = currFrameTime - lastFrameTime
 
   lastFrameTime = currFrameTime
 
-  if w.isKeyDown(keyEscape):
-      w.shouldClose = true
+  if win.isKeyDown(keyEscape):
+      win.shouldClose = true
 
-  if w.isKeyDown(keyW):
+  if win.isKeyDown(keyW):
     camera.move(cmForward, dt)
-  if w.isKeyDown(keyS):
+  if win.isKeyDown(keyS):
     camera.move(cmBackward, dt)
-  if w.isKeyDown(keyA):
+  if win.isKeyDown(keyA):
     camera.move(cmLeft, dt)
-  if w.isKeyDown(keyD):
+  if win.isKeyDown(keyD):
     camera.move(cmRight, dt)
 
 
 proc main() =
   # Initialise GLFW
-  glfw.init()
+  glfw.initialize()
 
   # Create window
-  let win = newGlWin(
-    dim = (w: SCREEN_WIDTH, h: SCREEN_HEIGHT),
-    title = "BasicLighting1",
-    resizable = false,
-    bits = (r: 8, g: 8, b: 8, a: 8, stencil: 8, depth: 16),
-    version = glv33,
-    profile = glpCore,
-    forwardCompat = true
-  )
+  var cfg = DefaultOpenglWindowConfig
+  cfg.size = (w: SCREEN_WIDTH, h: SCREEN_HEIGHT)
+  cfg.title = "02-BasicLighting/BasicLighting1"
+  cfg.resizable = false
+  cfg.bits = (r: 8, g: 8, b: 8, a: 8, stencil: 8, depth: 16)
+  cfg.version = glv33
+  cfg.profile = opCoreProfile
+  cfg.forwardCompat = true
+
+  var win = newWindow(cfg)
 
   # Initialise OpenGL
   glfw.makeContextCurrent(win)
@@ -245,7 +245,7 @@ proc main() =
 
   # Define viewport dimensions
   var width, height: int
-  (width, height) = framebufSize(win)
+  (width, height) = framebufferSize(win)
   glViewport(0, 0, GLint(width), GLint(height))
 
   # Hide and capture mouse cursor
@@ -255,7 +255,7 @@ proc main() =
   glfw.swapInterval(1)
 
   # Setup callbacks
-  win.cursorPosCb = cursorPosCb
+  win.cursorPositionCb = cursorPosCb
   win.scrollCb = scrollCb
 
   # Setup shaders and various OpenGL objects
@@ -266,7 +266,7 @@ proc main() =
     glfw.pollEvents()
     processInput(win)
     draw()
-    glfw.swapBufs(win)
+    glfw.swapBuffers(win)
 
   # Properly de-allocate all resources once they've outlived their purpose
   cleanup()

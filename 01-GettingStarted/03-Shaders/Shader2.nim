@@ -100,7 +100,7 @@ proc main() =
   # Create window
   var cfg = DefaultOpenglWindowConfig
   cfg.size = (w: 800, h: 600)
-  cfg.title = "Shader2"
+  cfg.title = "03-Shaders/Shader2"
   cfg.resizable = false
   cfg.bits = (r: 8, g: 8, b: 8, a: 8, stencil: 8, depth: 16)
   cfg.version = glv33

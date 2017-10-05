@@ -191,7 +191,7 @@ proc main() =
   # Create window
   var cfg = DefaultOpenglWindowConfig
   cfg.size = (w: 800, h: 600)
-  cfg.title = "Textures - Exercise4"
+  cfg.title = "04-Textures/Exercise4"
   cfg.resizable = false
   cfg.bits = (r: 8, g: 8, b: 8, a: 8, stencil: 8, depth: 16)
   cfg.version = glv33
