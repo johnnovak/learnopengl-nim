@@ -29,8 +29,8 @@ proc updateCameraVectors(c: FpsCamera) =
     yAxis = vec3[GLfloat](1.0, 0.0, 0.0)
     xAxis = vec3[GLfloat](0.0, 1.0, 0.0)
 
-  let tx = mat4(GLfloat(1.0)).rotate(yAxis, degToRad(c.pitch))
-                             .rotate(xAxis, degToRad(c.yaw))
+  let tx = mat4(GLfloat(1.0)).rotate(degToRad(c.pitch), yAxis)
+                             .rotate(degToRad(c.yaw),   xAxis)
 
   const frontStart = vec3[GLfloat](0.0, 0.0, -1.0)
 

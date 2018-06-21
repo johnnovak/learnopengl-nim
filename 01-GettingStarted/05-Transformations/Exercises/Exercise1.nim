@@ -160,7 +160,7 @@ proc draw() =
 
   # Set transform matrix
   var transform = mat4(GLfloat(1.0))
-    .rotate(vec3(GLfloat(0.0), 0.0, 1.0), getTime())
+    .rotate(getTime(), vec3(GLfloat(0.0), 0.0, 1.0))
     .translate(vec3(GLfloat(0.5), -0.5, 0.0))
 
   shaderProgram.setUniformMatrix4fv("transform", transform.caddr)

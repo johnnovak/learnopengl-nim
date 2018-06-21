@@ -89,12 +89,7 @@ var
 
   cameraSpeed = 0.05
 
-  yaw = 0.0
-  pitch = 0.0
-
   fov = 45.0
-  lastXPos = 0.0
-  lastYPos = 0.0
   lastFrameTime = 0.0
 
 
@@ -250,7 +245,7 @@ proc draw() =
     let angle = 20.0 * float(i)
     var model = mat4(GLfloat(1.0))
       .translate(pos)
-      .rotate(vec3(GLfloat(0.5), 1.0, 0.0), degToRad(angle))
+      .rotate(degToRad(angle), vec3(GLfloat(0.5), 1.0, 0.0))
 
     shaderProgram.setUniformMatrix4fv("model", model.caddr)
     glDrawArrays(GL_TRIANGLES, first = 0, count = 36)

@@ -134,7 +134,7 @@ proc setup() =
 
   # Transform matrix
   transform = mat4(GLfloat(1.0))
-    .rotate(vec3(GLfloat(0.0), 0.0, 1.0), degToRad(90.0))
+    .rotate(degToRad(90.0), vec3(GLfloat(0.0), 0.0, 1.0))
     .scale(vec3(GLfloat(0.5), 0.5, 0.5))
 
 

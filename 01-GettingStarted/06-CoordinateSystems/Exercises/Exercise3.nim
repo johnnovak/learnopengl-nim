@@ -232,7 +232,7 @@ proc draw() =
 
     var model = mat4(GLfloat(1.0))
       .translate(pos)
-      .rotate(vec3(GLfloat(0.5), 1.0, 0.0), angle)
+      .rotate(angle, vec3(GLfloat(0.5), 1.0, 0.0))
 
     glUniformMatrix4fv(
       glGetUniformLocation(shaderProgram, "model"),

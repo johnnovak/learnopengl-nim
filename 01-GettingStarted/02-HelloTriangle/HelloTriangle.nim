@@ -54,7 +54,7 @@ proc getShaderCompilationResult(shader: GLuint): tuple[success: bool,
                                                        error: string] =
   var
     success: GLint
-    infoLog: array[1024, GLchar]
+    infoLog = newString(1024)
 
   glGetShaderiv(shader, GL_COMPILE_STATUS, success.addr)
 
@@ -69,7 +69,7 @@ proc getProgramLinkingResult(program: GLuint): tuple[success: bool,
                                                      error: string] =
   var
     success: GLint
-    infoLog: array[1024, GLchar]
+    infoLog = newString(1024)
 
   glGetProgramiv(program, GL_LINK_STATUS, success.addr)
 

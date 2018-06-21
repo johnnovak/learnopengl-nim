@@ -250,7 +250,7 @@ proc draw() =
     let angle = 20.0 * float(i)
     var model = mat4(GLfloat(1.0))
       .translate(pos)
-      .rotate(vec3(GLfloat(0.5), 1.0, 0.0), degToRad(angle))
+      .rotate(degToRad(angle), vec3(GLfloat(0.5), 1.0, 0.0))
 
     shaderProgram.setUniformMatrix4fv("model", model.caddr)
     glDrawArrays(GL_TRIANGLES, first = 0, count = 36)
@@ -272,8 +272,8 @@ proc cursorPosCb(win: Window, pos: tuple[x, y: float64]) =
   pitch = max(min(pitch + dy, 89.0), -89.0)
 
   var tx = mat4(GLfloat(1.0))
-             .rotate(vec3(GLfloat(1.0), 0.0, 0.0), degToRad(pitch))
-             .rotate(vec3(GLfloat(0.0), 1.0, 0.0), degToRad(yaw))
+             .rotate(degToRad(pitch), vec3(GLfloat(1.0), 0.0, 0.0))
+             .rotate(degToRad(yaw),   vec3(GLfloat(0.0), 1.0, 0.0))
 
   cameraFront = (vec4(cameraFrontStart, 0.0) * tx).xyz
 
